@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/* Edge/IE render their own built-in show-password ("reveal") and clear
+   icons inside type="password" inputs, which visually stack on top of
+   our own custom eye-toggle button. Hide the native ones everywhere. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+html,
+body,
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+
+    --color-brand: #0C3D2E;
+    --color-brand-dark: #08281E;      
+    --color-brand-light: #D9E8E3;     
+    --color-brand-soft: #F2F7F5;      
+    --color-accent: #F7931E;
+    --color-accent-soft: #FFF4E5;
+    --color-ink: #111827;
+    --color-ink-soft: #4B5563;
+
+    --color-line: #E5E7EB;
+}
+
+html,
+body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.hero-gradient {
+    background: linear-gradient(
+        135deg,
+        #FFFFFF 0%,
+        #F2F7F5 55%,
+        #FFF4E5 100%
+    );
+}
+
+.legal-gradient {
+    background: linear-gradient(
+        180deg,
+        #dcfce7 0%,
+        #f0fdf4 35%,
+        #ffffff 100%
+    );
+}
+
+.dark-section {
+    background: radial-gradient(
+            ellipse at 20% 20%,
+            rgba(12, 61, 46, 0.12),
+            transparent 60%
+        ),
+        radial-gradient(
+            ellipse at 80% 80%,
+            rgba(249, 115, 22, 0.06),
+            transparent 60%
+        ),
+        #0b0b0c;
+}
+
+.underline-accent {
+    position: relative;
+    display: inline-block;
+}
+
+.underline-accent::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    opacity: 0.8;
+}
+
+/* Shared clinic-station shell: doctor, lab, triage and owner views follow the
+   same front-desk visual language as Reception (clinic green + orange). */
+.role-reception-theme,
+.pet-owner-theme {
+    background: #f8fafc;
+}
+
+.role-reception-theme aside,
+.pet-owner-theme aside {
+    background: #063D31 !important;
+    border-color: #042B22 !important;
+}
+
+.role-reception-theme aside [class*="bg-slate-9"],
+.role-reception-theme aside [class*="bg-slate-8"],
+.role-reception-theme aside [class*="bg-\[#070a11\]"],
+.role-reception-theme aside [class*="bg-\[#090d16\]"],
+.role-reception-theme aside [class*="bg-slate-950"],
+.pet-owner-theme aside [class*="bg-\[#020B2D\]"] {
+    background-color: #042B22 !important;
+}
+
+.role-reception-theme aside [class*="border-slate"],
+.pet-owner-theme aside [class*="border-white"] {
+    border-color: #0A5243 !important;
+}
+
+.role-reception-theme aside [class*="text-orange"],
+.pet-owner-theme aside [class*="text-orange"] {
+    color: #F97316;
+}
+
+.role-reception-theme aside a[aria-current="page"],
+.role-reception-theme aside button[class*="from-orange"],
+.pet-owner-theme aside a[class*="bg-orange"] {
+    background: #F97316 !important;
+    color: white !important;
+}
+
+.role-reception-theme aside a:not([aria-current="page"]):hover,
+.role-reception-theme aside button:not([class*="from-orange"]):hover,
+.pet-owner-theme aside a:hover {
+    background-color: #084D3E !important;
+    color: white !important;
+}
+
+.role-reception-theme .bg-slate-900.hover\:bg-orange-600:hover {
+    background-color: #F97316;
+}
+
+.lab-workspace .lab-hero .bg-orange-500\/20 {
+    background-color: rgba(249, 115, 22, .16);
+}
+
+.pet-owner-theme .bg-gradient-to-br.from-slate-100.via-slate-50.to-emerald-50 {
+    background-image: linear-gradient(135deg, #f8fafc, #f0fdf4);
+}
