@@ -23,11 +23,9 @@ const getPlans = async () => {
     try {
         await connectDB();
 
-        const plans = await SubscriptionPlan.find({
-            "billingCycle": "6_MONTHS"
-        }).lean();
+        const plans = await SubscriptionPlan.find().lean();
 
-        console.log("📦 Subscription Plans:");
+        console.log("📦 Subscription Plans:", plans.length);
         console.log(JSON.stringify(plans, null, 2));
 
         process.exit(0);

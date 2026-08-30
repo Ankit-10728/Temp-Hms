@@ -147,7 +147,7 @@ exports.createSubscriptionPayment = async (req, res) => {
       });
     }
 
-   const billingCycleMap = {
+    const billingCycleMap = {
       Monthly: "Monthly",
       Quarterly: "Quarterly",
       "6_MONTHS": "Half-Yearly",
@@ -377,8 +377,8 @@ exports.paymentSuccess = async (req, res) => {
 
     // Add subscription duration
     const latestPlanBillingCycle = clinic.subscriptionType === "12_MONTHS"
-        ? "Annual"
-        : clinic.subscriptionType === "6_MONTHS"
+      ? "Annual"
+      : clinic.subscriptionType === "6_MONTHS"
         ? "Half-Yearly"
         : clinic.subscriptionType;
 
@@ -392,17 +392,17 @@ exports.paymentSuccess = async (req, res) => {
     // it still stays correct even when the matched cycle differs from
     // subscriptionType's stale mapping.
     const latestPlan =
-        (await SubscriptionPlan.findOne({
-            subscriptionPlan: clinic.plan,
-            status: "Active",
-        })) ||
-        (await SubscriptionPlan.findOne({
-            billingCycle: latestPlanBillingCycle,
-            status: "Active",
-        }));
+      (await SubscriptionPlan.findOne({
+        subscriptionPlan: clinic.plan,
+        status: "Active",
+      })) ||
+      (await SubscriptionPlan.findOne({
+        billingCycle: latestPlanBillingCycle,
+        status: "Active",
+      }));
 
     if (!latestPlan) {
-        return res.status(404).send("Subscription plan not found");
+      return res.status(404).send("Subscription plan not found");
     }
 
     // Update tracker with latest plan
@@ -411,29 +411,29 @@ exports.paymentSuccess = async (req, res) => {
     // Calculate renewal date
     switch (latestPlan.billingCycle) {
 
-        case "Monthly":
-            planEndRenewalDate.setMonth(
-                planEndRenewalDate.getMonth() + 1
-            );
-            break;
+      case "Monthly":
+        planEndRenewalDate.setMonth(
+          planEndRenewalDate.getMonth() + 1
+        );
+        break;
 
-        case "Quarterly":
-            planEndRenewalDate.setMonth(
-                planEndRenewalDate.getMonth() + 3
-            );
-            break;
+      case "Quarterly":
+        planEndRenewalDate.setMonth(
+          planEndRenewalDate.getMonth() + 3
+        );
+        break;
 
-        case "Half-Yearly":
-            planEndRenewalDate.setMonth(
-                planEndRenewalDate.getMonth() + 6
-            );
-            break;
+      case "Half-Yearly":
+        planEndRenewalDate.setMonth(
+          planEndRenewalDate.getMonth() + 6
+        );
+        break;
 
-        case "Annual":
-            planEndRenewalDate.setFullYear(
-                planEndRenewalDate.getFullYear() + 1
-            );
-            break;
+      case "Annual":
+        planEndRenewalDate.setFullYear(
+          planEndRenewalDate.getFullYear() + 1
+        );
+        break;
     }
 
     // Add remaining trial days
@@ -467,7 +467,7 @@ exports.paymentSuccess = async (req, res) => {
     console.error(err.stack);
 
     return res.status(500).send(err.stack);
-}
+  }
 };
 
 exports.paymentFailure = async (req, res) => {
@@ -524,6 +524,9 @@ exports.getSubscriptionStatus = async (req, res) => {
 
     // Create subscription on first login
     if (!subscription) {
+      console.log(clinic.plan);
+      console.log(clinic.subscriptionType);
+
       // Clinic.subscriptionType is stored as a code (6_MONTHS, 12_MONTHS)
       // but SubscriptionPlan.billingCycle uses human-readable labels
       // (Half-Yearly, Annual) - same translation paymentSuccess uses below.
@@ -531,8 +534,8 @@ exports.getSubscriptionStatus = async (req, res) => {
         clinic.subscriptionType === "12_MONTHS"
           ? "Annual"
           : clinic.subscriptionType === "6_MONTHS"
-          ? "Half-Yearly"
-          : clinic.subscriptionType;
+            ? "Half-Yearly"
+            : clinic.subscriptionType;
 
       // Prefer a plan matching the clinic's assigned plan name, not just its
       // billing cycle - see the same fix in paymentSuccess above for why.
@@ -545,11 +548,19 @@ exports.getSubscriptionStatus = async (req, res) => {
         (await SubscriptionPlan.findOne({
           billingCycle,
           status: "Active",
-        }));
+        })) ||
+        (await SubscriptionPlan.findOne({
+
+          status: "Active",
+        }))
+        ;
 
       if (!defaultPlan) {
+
+
         return res.status(400).json({
           success: false,
+          checking: true,
           message: "Subscription plan not found",
         });
       }
