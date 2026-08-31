@@ -78,7 +78,7 @@ const seedClinicAdmin = async () => {
         // LOGIN CREDENTIALS
         // ==========================================
 
-        const email = "ak16012006@gmail.com";
+        const email = "philosopher1510@gmail.com";
         const password = "123456789";
 
         // ==========================================
@@ -126,7 +126,7 @@ const seedClinicAdmin = async () => {
         // ==========================================
 
         const clinicData = {
-            clinicCode: "CLINIC001",
+            clinicCode: "CLINIC021",
 
             name: "Test Veterinary Clinic",
 
@@ -141,9 +141,9 @@ const seedClinicAdmin = async () => {
 
             email: email,
 
-            phone: "6299742423",
+            phone: "9341145330",
 
-            altPhone: "9876543210",
+            altPhone: "9341135330",
 
             website: "https://testveterinaryclinic.example.com",
 
@@ -248,7 +248,7 @@ const seedClinicAdmin = async () => {
 
                 adminEmail: email,
 
-                adminPhone: "6299742423",
+                adminPhone: "9341145330",
 
                 designation: "Clinic Administrator",
 
