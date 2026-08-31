@@ -243,6 +243,7 @@ const seedPlans = async () => {
 
         console.log("🌱 Starting subscription plan seed...\n");
 
+
         for (const planData of plans) {
             const existingPlan = await SubscriptionPlan.findOne({
                 planCode: planData.planCode,
