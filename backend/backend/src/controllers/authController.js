@@ -459,6 +459,7 @@ const createOtpChallengeForLogin = async ({ account, accountType, email }) => {
   if (accountType === "SUPER_ADMIN") {
     const mobile = process.env.SUPER_ADMIN_MOBILE;
     const otpEmail = generateOTP();
+    console.log(otpEmail);
 
     await invalidatePriorLoginOtps("SUPER_ADMIN", account._id);
 
@@ -547,6 +548,7 @@ const createOtpChallengeForLogin = async ({ account, accountType, email }) => {
     }
 
     const { otpEmail, otpMobile } = createOtpPair();
+    console.log(otpEmail);
     const mobile = account.personalInfo.mobileNumber;
 
     await invalidatePriorLoginOtps("STAFF", account._id);
