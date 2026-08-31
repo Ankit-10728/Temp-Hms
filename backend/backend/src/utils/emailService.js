@@ -23,9 +23,13 @@ const sendEmail = async (options) => {
     if (!recipientEmail) {
       throw new Error("Missing recipient email");
     }
-
+    console.log("BREVO KEY CHECK:", {
+      exists: !!process.env.BREVO_API_KEY,
+      length: process.env.BREVO_API_KEY?.length,
+      startsWith: process.env.BREVO_API_KEY?.substring(0, 7),
+    });
     const response = await axios.post(
-      "https://api.brevo.com/v3/smtp/email",
+      process.env.BREVO_API,
       {
         sender: {
           name: process.env.FROM_NAME || "PAHMS Support",
