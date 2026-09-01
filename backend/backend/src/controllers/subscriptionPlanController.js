@@ -197,6 +197,21 @@ exports.createSubscriptionPayment = async (req, res) => {
     // recompute a different hash, failing with "incorrectly calculated
     // hash parameter" even though nothing in the request looked wrong.
     const email = clinic.contactEmail || clinic.email || "";
+    const phone = clinic.phone || clinic.adminDetails?.adminPhone || "";
+
+    if (!key || !salt) {
+      return res.status(500).json({
+        success: false,
+        message: "PayU test credentials are not configured.",
+      });
+    }
+
+    if (!email || !phone) {
+      return res.status(400).json({
+        success: false,
+        message: "A clinic email address and phone number are required for PayU payment.",
+      });
+    }
 
 
 
@@ -230,6 +245,7 @@ exports.createSubscriptionPayment = async (req, res) => {
         productinfo,
         firstname,
         email,
+        phone,
 
         surl: successUrl,
         furl: failureUrl,
@@ -331,6 +347,33 @@ exports.getSubscriptionDetails = async (req, res) => {
 
 exports.paymentSuccess = async (req, res) => {
   try {
+    const key = process.env.PAYU_KEY;
+    const salt = process.env.PAYU_SALT;
+    const reverseHashPayload =
+      `${salt}|${req.body.status}||||||${req.body.udf5 || ""}|${req.body.udf4 || ""}|${req.body.udf3 || ""}|${req.body.udf2 || ""}|${req.body.udf1 || ""}|${req.body.email || ""}|${req.body.firstname || ""}|${req.body.productinfo || ""}|${req.body.amount || ""}|${req.body.txnid || ""}|${req.body.key || ""}`;
+    const responseHashString = req.body.additionalCharges
+      ? `${req.body.additionalCharges}|${reverseHashPayload}`
+      : reverseHashPayload;
+    const expectedHash = crypto
+      .createHash("sha512")
+      .update(responseHashString)
+      .digest("hex");
+    const receivedHash = String(req.body.hash || "").toLowerCase();
+
+    if (
+      !key ||
+      !salt ||
+      req.body.key !== key ||
+      req.body.status !== "success" ||
+      receivedHash.length !== expectedHash.length ||
+      !crypto.timingSafeEqual(
+        Buffer.from(receivedHash, "utf8"),
+        Buffer.from(expectedHash, "utf8")
+      )
+    ) {
+      return res.status(400).send("Invalid PayU payment response.");
+    }
+
     const clinicId = req.body.udf1;
     const transactionId = req.body.txnid;
     const amountPaid = Number(req.body.amount);

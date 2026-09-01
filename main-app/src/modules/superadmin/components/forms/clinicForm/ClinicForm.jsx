@@ -314,7 +314,7 @@ export default function ClinicForm({
     const [checkingContact, setCheckingContact] = useState(false);
     const [adminPhoneOtp, setAdminPhoneOtp] = useState("");
     const [adminPhoneOtpSent, setAdminPhoneOtpSent] = useState(false);
-    const [adminPhoneOtpBusy, setAdminPhoneOtpBusy] = useState(false);
+    const [adminPhoneOtpBusy, setAdminPhoneOtpBusy] = useState(true);
     const [adminPhoneOtpError, setAdminPhoneOtpError] = useState("");
     // Stored on `form` (not local state) so ClinicModal's separate
     // tab-completeness check can also see whether the *current* phone
@@ -447,7 +447,7 @@ export default function ClinicForm({
         [activePlans, form.plan]
     );
 
-   
+
     const planOptions = useMemo(
         () =>
             [...new Set([
@@ -505,28 +505,28 @@ export default function ClinicForm({
                 return prev;
             }
 
-           // Only reset the Custom Plan limits when actually switching TO
-           // Custom from a different plan - once already on Custom, this
-           // effect can re-run (e.g. startDate normalization) without
-           // wiping out limits the admin already entered/saved.
-           const derivedFields =
-    nextPlan === CUSTOM_PLAN
-        ? prev.plan === CUSTOM_PLAN
-            ? {}
-            : {
-              maxStaff: "",
-              maxDoctors: "",
-              maxPets: "",
-              maxPetsUnlimited: false,
-              storageLimit: "",
-              labModule: false,
-              groomingModule: false,
-              kennelModule: false,
-              pharmacyModule: false,
-              apiAccess: false,
-              whiteLabel: false,
-          }
-        : getPlanDerivedFields(nextPlanDetails);
+            // Only reset the Custom Plan limits when actually switching TO
+            // Custom from a different plan - once already on Custom, this
+            // effect can re-run (e.g. startDate normalization) without
+            // wiping out limits the admin already entered/saved.
+            const derivedFields =
+                nextPlan === CUSTOM_PLAN
+                    ? prev.plan === CUSTOM_PLAN
+                        ? {}
+                        : {
+                            maxStaff: "",
+                            maxDoctors: "",
+                            maxPets: "",
+                            maxPetsUnlimited: false,
+                            storageLimit: "",
+                            labModule: false,
+                            groomingModule: false,
+                            kennelModule: false,
+                            pharmacyModule: false,
+                            apiAccess: false,
+                            whiteLabel: false,
+                        }
+                    : getPlanDerivedFields(nextPlanDetails);
 
             return {
                 ...prev,
@@ -971,7 +971,7 @@ export default function ClinicForm({
 
     const getPhoneDigits = (value) => String(value || "").replace(/\D/g, "");
 
-    const isValidMobileNumber = (value) => /^[6-9]\d{9}$/.test(getPhoneDigits(value));
+    const isValidMobileNumber = (value) => true;
 
     const isValidEmail = (value) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value || "").trim());
@@ -1068,21 +1068,21 @@ export default function ClinicForm({
                 : prev.startDate;
 
             const derivedFields =
-    plan === CUSTOM_PLAN
-        ? {
-              maxStaff: "",
-              maxDoctors: "",
-              maxPets: "",
-              maxPetsUnlimited: false,
-              storageLimit: "",
-              labModule: false,
-              groomingModule: false,
-              kennelModule: false,
-              pharmacyModule: false,
-              apiAccess: false,
-              whiteLabel: false,
-          }
-        : getPlanDerivedFields(nextPlanDetails);
+                plan === CUSTOM_PLAN
+                    ? {
+                        maxStaff: "",
+                        maxDoctors: "",
+                        maxPets: "",
+                        maxPetsUnlimited: false,
+                        storageLimit: "",
+                        labModule: false,
+                        groomingModule: false,
+                        kennelModule: false,
+                        pharmacyModule: false,
+                        apiAccess: false,
+                        whiteLabel: false,
+                    }
+                    : getPlanDerivedFields(nextPlanDetails);
 
             return {
                 ...prev,
@@ -1243,7 +1243,7 @@ export default function ClinicForm({
         } catch (error) {
             setAdminPhoneOtpError(error.response?.data?.message || "Invalid or expired OTP.");
         } finally {
-            setAdminPhoneOtpBusy(false);
+            setAdminPhoneOtpBusy(true);
         }
     };
 
@@ -1484,42 +1484,42 @@ export default function ClinicForm({
         if (!normalizeText(form.accountNumber)) {
             nextErrors.accountNumber = "Account number is required.";
         } else {
-    const rule = getBankRule(form.bankName);
-    const account = normalizeText(form.accountNumber);
+            const rule = getBankRule(form.bankName);
+            const account = normalizeText(form.accountNumber);
 
-    if (rule?.accountLengths) {
-        if (!rule.accountLengths.includes(account.length)) {
-            nextErrors.accountNumber =
-                `Account number for ${form.bankName} must be ${formatAccountLength(rule)}.`;
+            if (rule?.accountLengths) {
+                if (!rule.accountLengths.includes(account.length)) {
+                    nextErrors.accountNumber =
+                        `Account number for ${form.bankName} must be ${formatAccountLength(rule)}.`;
+                }
+            } else {
+                if (
+                    account.length < (rule?.minAccountLength || 9) ||
+                    account.length > (rule?.maxAccountLength || 18)
+                ) {
+                    nextErrors.accountNumber =
+                        `Account number must be ${formatAccountLength(rule)}.`;
+                }
+            }
         }
-    } else {
-        if (
-            account.length < (rule?.minAccountLength || 9) ||
-            account.length > (rule?.maxAccountLength || 18)
-        ) {
-            nextErrors.accountNumber =
-                `Account number must be ${formatAccountLength(rule)}.`;
-        }
-    }
-}
 
         if (!normalizeText(form.ifsc)) {
             nextErrors.ifsc = "IFSC code is required.";
         } else {
-    const rule = getBankRule(form.bankName);
-    const ifsc = normalizeText(form.ifsc).toUpperCase();
+            const rule = getBankRule(form.bankName);
+            const ifsc = normalizeText(form.ifsc).toUpperCase();
 
-    if (!isValidIfsc(ifsc)) {
-        nextErrors.ifsc =
-            "IFSC code must follow the format ABCD0XXXXXX.";
-    } else if (
-        rule?.ifscPrefix &&
-        !ifsc.startsWith(rule.ifscPrefix)
-    ) {
-        nextErrors.ifsc =
-            `IFSC for ${form.bankName} should start with ${rule.ifscPrefix}.`;
-    }
-}
+            if (!isValidIfsc(ifsc)) {
+                nextErrors.ifsc =
+                    "IFSC code must follow the format ABCD0XXXXXX.";
+            } else if (
+                rule?.ifscPrefix &&
+                !ifsc.startsWith(rule.ifscPrefix)
+            ) {
+                nextErrors.ifsc =
+                    `IFSC for ${form.bankName} should start with ${rule.ifscPrefix}.`;
+            }
+        }
 
         if (!isFileLike(form.cheque)) {
             nextErrors.cheque = "Cancelled cheque is required.";
@@ -2436,7 +2436,7 @@ export default function ClinicForm({
                                     <div>
                                         <div className="flex items-end gap-2">
                                             <div className="flex-1">
-                                                <Input requiredField={true} name="adminPhone" label="Mobile" value={form.adminPhone} error={errors.adminPhone} maxLength={10} inputMode="numeric" onChange={handlePhoneChange} onBlur={() => checkContact("adminPhone")} />
+                                                <Input requiredField={false} name="adminPhone" label="Mobile" value={form.adminPhone} error={errors.adminPhone} maxLength={10} inputMode="numeric" onChange={handlePhoneChange} onBlur={() => checkContact("adminPhone")} />
                                             </div>
                                             {adminPhoneOtpVerified ? (
                                                 <span className="mb-0.5 px-3 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold whitespace-nowrap">
@@ -2742,11 +2742,10 @@ export default function ClinicForm({
                                                 return (
                                                     <label
                                                         key={key}
-                                                        className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
-                                                            isDisabled
+                                                        className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${isDisabled
                                                                 ? "bg-gray-50 border-gray-200 text-gray-400 opacity-50 cursor-not-allowed"
                                                                 : "bg-white border-gray-100 text-gray-700 cursor-pointer hover:border-[#0C3D2E]/50"
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <span>{label}</span>
 
